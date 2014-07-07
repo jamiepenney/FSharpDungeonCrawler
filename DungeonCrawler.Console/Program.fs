@@ -1,24 +1,34 @@
 ﻿open DungeonCrawler.Core
+open System
 
 type Action =
     | Continue of World
     | Error of World * string
     | Exit
 
+type Printer() =
+    member this.slow(format, [<ParamArray>] args : Object[]) =
+        let formatted = String.Format(format, args)
+        let printchar c = 
+            printf "%c" c
+            System.Threading.Thread.Sleep(4);
+        String.iter printchar (formatted + System.Environment.NewLine)
+
 [<EntryPoint>]
 let main argv = 
-    printfn "Dungeon Crawler 2014\n"
+    let printer = new Printer()
+    printer.slow "Dungeon Crawler 2014\n"
 
-    printfn "What is your name?"
+    printer.slow "What is your name?"
     let name = System.Console.ReadLine()
     let player = new Player(name)
-    printfn "Welcome %s\nYou are at the start of a massive cave system" player.Name
+    printer.slow("Welcome %s\nYou are at the start of a massive cave system", player.Name)
 
     let start_world = new World(player, new Room("A dark cave", Exit.West))
 
     let getAction (world : World) = 
-        printfn "You see:\n%s" (world.CurrentRoom.GetDescription())
-        printfn "What do you want to do?"
+        printer.slow("You see:\n%s", world.CurrentRoom.GetDescription())
+        printer.slow "What do you want to do?"
         let message = System.Console.ReadLine()
         
         match Parser.Parse(message) with
@@ -36,7 +46,7 @@ let main argv =
         | Exit -> world
         | Continue(w) -> run f w
         | Error(w, err) ->
-            printfn "%s" err
+            printer.slow err
             run f w
     run getAction start_world |> ignore
     
