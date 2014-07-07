@@ -51,7 +51,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FSharpDungeonCrawler.Core\DungeonCrawler.Core.fsproj">
+    <ProjectReference Include="..\DungeonCrawler.Core\DungeonCrawler.Core.fsproj">
       <Name>DungeonCrawler.Core</Name>
       <Project>{c64a002f-c940-415d-b056-47f9476f9bd0}</Project>
       <Private>True</Private>
