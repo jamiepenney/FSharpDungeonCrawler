@@ -7,12 +7,17 @@ type Action =
 
 [<EntryPoint>]
 let main argv = 
-    printfn "Welcome to Dungeon Crawler"
-    let player = new Player("Jamie")
-    let start_world = new World(player, new Room("Start of the cave system", Exit.West))
+    printfn "Dungeon Crawler 2014\n"
+
+    printfn "What is your name?"
+    let name = System.Console.ReadLine()
+    let player = new Player(name)
+    printfn "Welcome %s\nYou are at the start of a massive cave system" player.Name
+
+    let start_world = new World(player, new Room("A dark cave", Exit.West))
 
     let getAction (world : World) = 
-        printfn "%s" (world.CurrentRoom.GetDescription())
+        printfn "You see:\n%s" (world.CurrentRoom.GetDescription())
         printfn "What do you want to do?"
         let message = System.Console.ReadLine()
         
