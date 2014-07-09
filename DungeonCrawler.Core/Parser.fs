@@ -11,8 +11,8 @@ module Parser =
         let (|Match|_|) pattern input =
             let m = Regex.Match(input, pattern) in
             if m.Success then Some (List.tail [ for g in m.Groups -> g.Value ]) else None
-        match str with
-        | Match "go (North|South|East|West).*" result -> 
+        match str.ToLower() with
+        | Match "(go|move) (north|south|east|west).*" result ->
             match result.Head.ToLower() with
             | "north" -> MoveCommand(Exit.North)
             | "south" -> MoveCommand(Exit.South)
