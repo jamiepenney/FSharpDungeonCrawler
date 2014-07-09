@@ -12,29 +12,33 @@ type Printer() =
         let printchar c = 
             printf "%c" c
             System.Threading.Thread.Sleep(4);
-        String.iter printchar (formatted + System.Environment.NewLine)
+        String.iter printchar formatted
+    member this.slown(format, [<ParamArray>] args : Object[]) =
+        this.slow(format + Environment.NewLine, args)
 
 [<EntryPoint>]
 let main argv = 
     let printer = new Printer()
-    printer.slow "Dungeon Crawler 2014\n"
+    printer.slown "Dungeon Crawler 2014\n"
 
-    printer.slow "What is your name?"
+    printer.slow "What is your name?\n#: "
     let name = System.Console.ReadLine()
     let player = new Player(name)
-    printer.slow("Welcome %s\nYou are at the start of a massive cave system", player.Name)
+    printer.slown("Welcome {0}\nYou are at the start of a massive cave system\n", player.Name)
 
-    let start_world = new World(player, new Room("A dark cave", Exit.West))
+    let start_world = WorldGenerator.Generate player
 
     let getAction (world : World) = 
-        printer.slow("You see:\n%s", world.CurrentRoom.GetDescription())
-        printer.slow "What do you want to do?"
+        printer.slown ("You see:\n{0}", world.CurrentRoom.GetDescription())
+        printer.slow "What do you want to do?\n#: "
         let message = System.Console.ReadLine()
         
         match Parser.Parse(message) with
         | MoveCommand(exit) -> 
             match world.Move(exit) with
-            | Some(w) -> Continue(w)
+            | Some(w) ->
+                printer.slown("\nYou move carefully {0}", exit)
+                Continue(w)
             | _ -> Action.Error(world, "I can't move that way")
         | CommandError(str) -> 
             Action.Error(world, "I did not understand your command")
@@ -46,8 +50,8 @@ let main argv =
         | Exit -> world
         | Continue(w) -> run f w
         | Error(w, err) ->
-            printer.slow err
+            printer.slown err
             run f w
     run getAction start_world |> ignore
     
-    0 // return an integer exit code
+    0
